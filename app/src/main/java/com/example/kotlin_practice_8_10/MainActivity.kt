@@ -26,6 +26,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlin_practice_8_10.retrofit.MainAPI
+import com.example.kotlin_practice_8_10.retrofit.User
 import com.example.kotlin_practice_8_10.ui.theme.Kotlin_practice_810Theme
 import com.example.kotlin_practice_8_10.viewModel.MyViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +37,7 @@ import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.net.UnknownHostException
+import java.util.Random
 
 class MainActivity : ComponentActivity() {
     private lateinit var vModel: MyViewModel
@@ -62,7 +65,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
                 AccountInfo(vModel)
-                WorkWithAccountInfo()
+                WorkWithAccountInfo(vModel)
             }
             CreateAccount_goToDB_buttons()
         }
@@ -84,10 +87,8 @@ fun AccountInfo(vModel: MyViewModel) {
         Text(text = "Email: ${emailState.value}")
     }
 }
-
-@Preview(showBackground = true)
 @Composable
-fun WorkWithAccountInfo() {
+fun WorkWithAccountInfo(vModel: MyViewModel) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -96,7 +97,7 @@ fun WorkWithAccountInfo() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Button(
-            onClick = { generateAccountInfo(context) },
+            onClick = { generateAccountInfo(context, vModel) },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "generate account info")
@@ -109,37 +110,37 @@ fun WorkWithAccountInfo() {
         }
     }
 }
-
-fun generateAccountInfo(context: Context){
-//    val retrofit = Retrofit.Builder()
-//        .baseUrl("https://dummyjson.com")
-//        .addConverterFactory(GsonConverterFactory.create()).build()
-//    val userAPI = retrofit.create(MainAPI::class.java)
-//    CoroutineScope(Dispatchers.IO).launch {
-//        withContext(Dispatchers.Main)
-//        {
-//            try {
-//                user = userAPI.getUserById(Random().nextInt(50) + 1)
-//                Log.d("myApp", user.username + " " + user.password + " " + user.email)
-//                vModel.setLogin(user.username)
-//                vModel.setPassword(user.password)
-//                vModel.setEmail(user.email)
-//                Toast.makeText(
-//                    context,
-//                    "The account details was successfully generated",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            } catch (e: UnknownHostException) {
-//                Toast.makeText(
-//                    context,
-//                    "Failed to generate: check your internet connection",
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            } catch (e: Exception) {
-//                Log.e("myApp", "error: $e")
-//            }
-//        }
-//    }
+fun generateAccountInfo(context: Context, vModel: MyViewModel){
+    var user: User
+    val retrofit = Retrofit.Builder()
+        .baseUrl("https://dummyjson.com")
+        .addConverterFactory(GsonConverterFactory.create()).build()
+    val userAPI = retrofit.create(MainAPI::class.java)
+    CoroutineScope(Dispatchers.IO).launch {
+        withContext(Dispatchers.Main)
+        {
+            try {
+                user = userAPI.getUserById(Random().nextInt(50) + 1)
+                Log.d("myApp", user.username + " " + user.password + " " + user.email)
+                vModel.setLogin(user.username)
+                vModel.setPassword(user.password)
+                vModel.setEmail(user.email)
+                Toast.makeText(
+                    context,
+                    "The account details was successfully generated",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } catch (e: UnknownHostException) {
+                Toast.makeText(
+                    context,
+                    "Failed to generate: check your internet connection",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } catch (e: Exception) {
+                Log.e("myApp", "error: $e")
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
