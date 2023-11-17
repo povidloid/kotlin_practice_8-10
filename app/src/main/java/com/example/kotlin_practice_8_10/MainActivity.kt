@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun AccountInfo(vModel: MyViewModel) {
     val loginState = vModel.getLogin().observeAsState()
@@ -103,7 +102,11 @@ fun WorkWithAccountInfo(vModel: MyViewModel) {
             Text(text = "generate account info")
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                vModel.setLogin("")
+                vModel.setPassword("")
+                vModel.setEmail("")
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "clean account info")
@@ -142,7 +145,6 @@ fun generateAccountInfo(context: Context, vModel: MyViewModel){
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun CreateAccount_goToDB_buttons() {
