@@ -52,13 +52,13 @@ class MainActivity : ComponentActivity() {
                     startDestination = "Fragment1"
                 ){
                     composable("Fragment1"){
-                        Fragment1(navController)
+                        Fragment1(navController, vModel)
                     }
                     composable("Fragment2"){
-                        Fragment2(navController)
+                        Fragment2(navController, vModel)
                     }
                     composable("Fragment3"){
-                        Fragment3(navController)
+                        Fragment3(navController, vModel)
                     }
                 }
                 AccountInfo(vModel)
@@ -72,11 +72,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AccountInfo(vModel: MyViewModel) {
     val loginState = vModel.getLogin().observeAsState()
-    vModel.setLogin("")
     val passwordState = vModel.getPassword().observeAsState()
-    vModel.setPassword("")
     val emailState = vModel.getEmail().observeAsState()
-    vModel.setEmail("")
     Column(
         modifier = Modifier
             .fillMaxWidth()

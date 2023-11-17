@@ -1,5 +1,7 @@
 package com.example.kotlin_practice_8_10
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,15 +16,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import com.example.kotlin_practice_8_10.viewModel.MyViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fragment1(navController: NavController){
+fun Fragment1(navController: NavController, vModel: MyViewModel){
     var login by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,7 +43,16 @@ fun Fragment1(navController: NavController){
         )
         Button(
             onClick = {
-                navController.navigate("Fragment2")
+                val str = login
+                if (str.isEmpty())
+                    Toast.makeText(context, "Enter your nickname", Toast.LENGTH_SHORT).show()
+                else {
+                    vModel.setLogin(str)
+                    try {
+                    } catch (e: Exception){
+                        Log.d("myApp", e.toString())}
+                    navController.navigate("Fragment2")
+                }
             },
             modifier = Modifier.fillMaxWidth()) {
             Text(text = "continue")
@@ -46,10 +61,11 @@ fun Fragment1(navController: NavController){
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fragment2(navController: NavController){
+fun Fragment2(navController: NavController, vModel: MyViewModel){
     var password by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -64,7 +80,12 @@ fun Fragment2(navController: NavController){
         )
         Button(
             onClick = {
-                navController.navigate("Fragment3")
+                if (password.isEmpty())
+                    Toast.makeText(context, "Enter your password", Toast.LENGTH_SHORT).show()
+                else{
+                    vModel.setPassword(password)
+                    navController.navigate("Fragment3")
+                }
             },
             modifier = Modifier.fillMaxWidth()) {
             Text(text = "continue")
@@ -84,10 +105,11 @@ fun Fragment2(navController: NavController){
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fragment3(navController: NavController){
+fun Fragment3(navController: NavController, vModel: MyViewModel){
     var email by rememberSaveable {
         mutableStateOf("")
     }
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -102,6 +124,12 @@ fun Fragment3(navController: NavController){
         )
         Button(
             onClick = {
+                if (email.isEmpty())
+                    Toast.makeText(context, "Enter your email", Toast.LENGTH_SHORT).show()
+                else{
+                    vModel.setEmail(email)
+                    Toast.makeText(context, "Account info has been entered", Toast.LENGTH_SHORT).show()
+                }
                 navController.navigate("Fragment1"){
                     popUpTo("Fragment1"){
                         inclusive = true
