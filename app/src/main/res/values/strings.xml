@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">kotlin_practice_8-10</string>
+    <string name="title_activity_database">DatabaseActivity</string>
 </resources>

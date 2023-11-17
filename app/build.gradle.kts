@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -36,6 +38,17 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile::class) {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
     buildFeatures {
         compose = true
     }
@@ -50,6 +63,12 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
+    implementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    kapt("androidx.room:room-compiler:2.5.2")
+
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

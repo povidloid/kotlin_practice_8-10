@@ -1,6 +1,7 @@
 package com.example.kotlin_practice_8_10
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -26,6 +27,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.kotlin_practice_8_10.database.MainDB
+import com.example.kotlin_practice_8_10.database.UserDB
 import com.example.kotlin_practice_8_10.retrofit.MainAPI
 import com.example.kotlin_practice_8_10.retrofit.User
 import com.example.kotlin_practice_8_10.ui.theme.Kotlin_practice_810Theme
@@ -40,11 +43,11 @@ import java.net.UnknownHostException
 import java.util.Random
 
 class MainActivity : ComponentActivity() {
-    private lateinit var vModel: MyViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            vModel = ViewModelProvider(this)[MyViewModel::class.java]
+            val vModel = ViewModelProvider(this)[MyViewModel::class.java]
+            val db = MainDB.getDb(this)
 
             val navController = rememberNavController()
             Column(
@@ -67,7 +70,7 @@ class MainActivity : ComponentActivity() {
                 AccountInfo(vModel)
                 WorkWithAccountInfo(vModel)
             }
-            CreateAccount_goToDB_buttons()
+            CreateAccount_goToDB_buttons(vModel, db)
         }
     }
 }
@@ -103,15 +106,18 @@ fun WorkWithAccountInfo(vModel: MyViewModel) {
         }
         Button(
             onClick = {
-                vModel.setLogin("")
-                vModel.setPassword("")
-                vModel.setEmail("")
+                cleanVModel(vModel)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "clean account info")
         }
     }
+}
+fun cleanVModel(vModel: MyViewModel){
+    vModel.setLogin("")
+    vModel.setPassword("")
+    vModel.setEmail("")
 }
 fun generateAccountInfo(context: Context, vModel: MyViewModel){
     var user: User
@@ -145,9 +151,9 @@ fun generateAccountInfo(context: Context, vModel: MyViewModel){
         }
     }
 }
-@Preview(showBackground = true)
 @Composable
-fun CreateAccount_goToDB_buttons() {
+fun CreateAccount_goToDB_buttons(vModel: MyViewModel, db: MainDB) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -156,16 +162,36 @@ fun CreateAccount_goToDB_buttons() {
         verticalArrangement = Arrangement.Bottom
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                createAccount(vModel, db, context)
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "create account")
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                val intent = Intent(context, DatabaseActivity::class.java)
+                context.startActivity(intent)
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "go to database")
         }
+    }
+}
+
+fun createAccount(vModel: MyViewModel, db: MainDB, context: Context){
+    try {
+        val user = UserDB(null, vModel.getLogin().value.toString(),
+            vModel.getPassword().value.toString(),
+            vModel.getEmail().value.toString())
+        cleanVModel(vModel)
+        Thread{
+            db.getDao().insertUser(user)
+        }.start()
+        Toast.makeText(context, "The account was successfully entered into the database", Toast.LENGTH_SHORT).show()
+    } catch (e: Exception){
+        Log.e("myApp", e.toString() )
     }
 }
