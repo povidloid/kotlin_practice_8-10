@@ -63,6 +63,10 @@ android {
 }
 
 dependencies {
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.compose.material:material:1.5.4")
+
     implementation("androidx.compose.runtime:runtime-livedata:1.5.2")
     implementation("androidx.room:room-ktx:2.5.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
