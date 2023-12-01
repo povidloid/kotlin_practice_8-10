@@ -119,11 +119,12 @@ fun generateAccountInfo(context: Context, vModel: MyViewModel) {
         .baseUrl("https://dummyjson.com")
         .addConverterFactory(GsonConverterFactory.create()).build()
     val userAPI = retrofit.create(MainAPI::class.java)
+    val num = 50
     CoroutineScope(Dispatchers.IO).launch {
         withContext(Dispatchers.Main)
         {
             try {
-                user = userAPI.getUserById(Random().nextInt(50) + 1)
+                user = userAPI.getUserById(Random().nextInt(num) + 1)
                 Log.d("myApp", user.username + " " + user.password + " " + user.email)
                 vModel.setLogin(user.username)
                 vModel.setPassword(user.password)
